@@ -108,7 +108,6 @@ static function CreditsText () : String {
 }
 
 function Update () {
-	Debug.Log(Input.GetButtonUp("Token"));
 	if (Input.GetButtonUp("Token")) InsertToken();
 }
 
