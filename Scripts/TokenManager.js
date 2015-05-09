@@ -1,4 +1,5 @@
 ﻿#pragma strict
+import System.Collections.Generic;
 
 static var _instance : TokenManager;
 public var messageListeners : GameObject[];
@@ -72,7 +73,7 @@ static function UseCredit() : boolean {
 	}
 }
 
-static function TokensPerCreditText () : String {
+static function TokensPerCreditText (checkTokensInserted : boolean) : String {
 	var tokensPerCredit = instance().tokensPerCredit;
 	if (tokensPerCredit == 0) {
 		return "FREE PLAY";
@@ -82,7 +83,7 @@ static function TokensPerCreditText () : String {
 	}	
 	else if (tokensPerCredit > 1) {
 		var tokensSoFar = instance().tokensInserted % instance().tokensPerCredit;
-		if (tokensSoFar == 0) {
+		if (tokensSoFar == 0 || !checkTokensInserted) {
 			return String.Format("{0} COINS PER CREDIT", tokensPerCredit);
 		}
 		else {
@@ -120,4 +121,12 @@ function SendMessageToListeners (message : String) {
 	for (messageListener in messageListeners) {
 		messageListener.SendMessage(message);
 	}
+}
+
+static function AddListener (newListener : GameObject) {
+	var listeners : List.<GameObject> = new List.<GameObject>(instance().messageListeners);
+	if (!listeners.Contains(newListener)) {
+		listeners.Add(newListener);
+	}
+	instance().messageListeners = listeners.ToArray();
 }
