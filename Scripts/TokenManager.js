@@ -125,6 +125,12 @@ function SendMessageToListeners (message : String) {
 
 static function AddListener (newListener : GameObject) {
 	var listeners : List.<GameObject> = new List.<GameObject>(instance().messageListeners);
+	for (var i : int = listeners.Count - 1; i >= 0 ; i--) {
+		if (listeners[i] == null) {
+			Debug.Log("here");
+			listeners.RemoveAt(i);
+		}
+	}
 	if (!listeners.Contains(newListener)) {
 		listeners.Add(newListener);
 	}
