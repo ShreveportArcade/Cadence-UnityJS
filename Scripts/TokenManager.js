@@ -63,12 +63,16 @@ static function AddCredit(credits : int) {
 }
 
 static function UseCredit() : boolean {
-	if (instance().credits > 0) {
+	if (instance().tokensPerCredit == 0) {
+		return true;
+	}
+	else if (instance().credits > 0) {
 		instance().credits--;
 		instance().SendMessageToListeners("OnCreditChanged");
 		return true;
 	}
 	else {
+		instance().SendMessageToListeners("OnInsufficientCredit");
 		return false;
 	}
 }
@@ -127,7 +131,6 @@ static function AddListener (newListener : GameObject) {
 	var listeners : List.<GameObject> = new List.<GameObject>(instance().messageListeners);
 	for (var i : int = listeners.Count - 1; i >= 0 ; i--) {
 		if (listeners[i] == null) {
-			Debug.Log("here");
 			listeners.RemoveAt(i);
 		}
 	}
