@@ -94,7 +94,7 @@ static function TokensPerCreditText (checkTokensInserted : boolean) : String {
 			return String.Format("{0}/{1} COINS", tokensSoFar, tokensPerCredit);
 		}
 	}
-	else if (tokensPerCredit < -1) {
+	else {
 		return String.Format("{0} CREDITS PER COIN", Mathf.Abs(tokensPerCredit));
 	}	
 }

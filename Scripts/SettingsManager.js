@@ -1,4 +1,5 @@
 ﻿#pragma strict
+import UnityEngine.SceneManagement;
 
 static var _instance : SettingsManager;
 private var sceneToLoad : String;
@@ -32,13 +33,13 @@ function Update () {
 }
 
 static function EnterSettings () {
-	instance().sceneToLoad = Application.loadedLevelName;
+	instance().sceneToLoad = SceneManager.GetActiveScene().name;
 	instance().cursorVisibleInGame = Cursor.visible;
 	Cursor.visible = true;
-	Application.LoadLevel("CadenceSettings");
+	SceneManager.LoadScene("CadenceSettings");
 }
 
 static function ExitSettings () {
 	Cursor.visible = instance().cursorVisibleInGame;
-	Application.LoadLevel(instance().sceneToLoad);
+	SceneManager.LoadScene(instance().sceneToLoad);
 }
