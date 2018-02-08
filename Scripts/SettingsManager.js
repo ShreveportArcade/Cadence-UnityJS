@@ -5,6 +5,11 @@ static var _instance : SettingsManager;
 private var sceneToLoad : String;
 private var cursorVisibleInGame : boolean;
 
+public var allowExit : boolean = false;
+public var exitHoldTime : float = 5;
+public var exitButtonCombo : KeyCode[] = [KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R];
+private var lastExitRelease : float = -1;
+
 public static function instance() : SettingsManager {
     if (_instance == null) {
 		var settingsMan = new GameObject("Cadence.SettingsManager");
@@ -22,6 +27,8 @@ function Awake () {
 		Debug.LogWarning("SettingsManager already initialized, destroying duplicate");
 		GameObject.Destroy(this);
 	}
+
+	lastExitRelease = Time.time;
 }
 
 function Update () {
@@ -29,6 +36,24 @@ function Update () {
 		(Input.GetKey(KeyCode.RightShift) || Input.GetKey(KeyCode.LeftShift)) &&
 		(Input.GetKey(KeyCode.RightAlt) || Input.GetKey(KeyCode.LeftAlt))) {
 		EnterSettings();
+	}
+
+	if (allowExit) {
+		var shouldExit : boolean = true;
+		for(var key : KeyCode in exitButtonCombo) {
+			if (!Input.GetKey(key)) {
+				shouldExit = false;
+				break;
+			}
+		}
+		if (!shouldExit) {
+			lastExitRelease = Time.time;
+		}
+
+		if (Time.time - lastExitRelease > exitHoldTime) {
+			Debug.Log("Application Quitting");
+			Application.Quit();
+		}
 	}
 }
 

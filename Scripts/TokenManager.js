@@ -6,6 +6,8 @@ public var messageListeners : GameObject[];
 public var tokensPerCredit : int = 1;
 private var tokensInserted : int = 0;
 private var credits : int = 0;
+public var hasCoinDoor : boolean = true;
+
 
 public static function instance() : TokenManager {
     if (_instance == null) {
@@ -63,7 +65,7 @@ static function AddCredit(credits : int) {
 }
 
 static function UseCredit() : boolean {
-	if (instance().tokensPerCredit == 0) {
+	if (!instance().hasCoinDoor || instance().tokensPerCredit == 0) {
 		return true;
 	}
 	else if (instance().credits > 0) {
@@ -79,7 +81,7 @@ static function UseCredit() : boolean {
 
 static function TokensPerCreditText (checkTokensInserted : boolean) : String {
 	var tokensPerCredit = instance().tokensPerCredit;
-	if (tokensPerCredit == 0) {
+	if (!instance().hasCoinDoor || tokensPerCredit == 0) {
 		return "FREE PLAY";
 	}
 	else if (Mathf.Abs(tokensPerCredit) == 1) {
@@ -100,7 +102,7 @@ static function TokensPerCreditText (checkTokensInserted : boolean) : String {
 }
 
 static function CreditsText () : String {
-	if (instance().tokensPerCredit == 0) {
+	if (!instance().hasCoinDoor || instance().tokensPerCredit == 0) {
 		return "";
 	}
 
