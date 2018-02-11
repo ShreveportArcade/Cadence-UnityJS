@@ -2,7 +2,7 @@
 import System.Collections.Generic;
 
 static var _instance : TokenManager;
-public var messageListeners : GameObject[];
+public static var messageListeners : GameObject[] = new GameObject[0];
 public var tokensPerCredit : int = 1;
 private var tokensInserted : int = 0;
 private var credits : int = 0;
@@ -11,9 +11,11 @@ public var hasCoinDoor : boolean = true;
 
 public static function instance() : TokenManager {
     if (_instance == null) {
+        _instance = FindObjectOfType(TokenManager);
+    }
+    if (_instance == null) {
 		var tokenMan = new GameObject("Cadence.TokenManager");
 		_instance = tokenMan.AddComponent(TokenManager);
-		LoadSession();
 	}
 	return _instance;
 }
@@ -21,12 +23,15 @@ public static function instance() : TokenManager {
 function Awake () {
 	if (_instance == null) {
 		_instance = this;
-		DontDestroyOnLoad(_instance.gameObject);
-		LoadSession();
 	}
 	else if (_instance != this) {
 		Debug.LogWarning("TokenManager already initialized, destroying duplicate");
 		GameObject.Destroy(this);
+	}
+	
+	if (_instance == this) {
+	    DontDestroyOnLoad(_instance.gameObject);
+		LoadSession();
 	}
 }
 
@@ -81,7 +86,10 @@ static function UseCredit() : boolean {
 
 static function TokensPerCreditText (checkTokensInserted : boolean) : String {
 	var tokensPerCredit = instance().tokensPerCredit;
-	if (!instance().hasCoinDoor || tokensPerCredit == 0) {
+	if (!instance().hasCoinDoor) {
+	    return "";
+	}
+	else if (tokensPerCredit == 0) {
 		return "FREE PLAY";
 	}
 	else if (Mathf.Abs(tokensPerCredit) == 1) {
@@ -116,21 +124,21 @@ static function CreditsText () : String {
 }
 
 function Update () {
-	if (Input.GetButtonUp("Token")) InsertToken();
+	if (hasCoinDoor && Input.GetButtonUp("Token")) InsertToken();
 }
 
 function OnApplicationQuit() {
     SaveSession();
 }
 
-function SendMessageToListeners (message : String) {
+static function SendMessageToListeners (message : String) {
 	for (messageListener in messageListeners) {
 		messageListener.SendMessage(message);
 	}
 }
 
 static function AddListener (newListener : GameObject) {
-	var listeners : List.<GameObject> = new List.<GameObject>(instance().messageListeners);
+	var listeners : List.<GameObject> = new List.<GameObject>(messageListeners);
 	for (var i : int = listeners.Count - 1; i >= 0 ; i--) {
 		if (listeners[i] == null) {
 			listeners.RemoveAt(i);
