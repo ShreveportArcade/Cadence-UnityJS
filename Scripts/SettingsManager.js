@@ -28,7 +28,7 @@ function Awake () {
 		GameObject.Destroy(this);
 	}
 
-	lastExitRelease = Time.time;
+	lastExitRelease = Time.unscaledTime;
 }
 
 function Update () {
@@ -47,10 +47,10 @@ function Update () {
 			}
 		}
 		if (!shouldExit) {
-			lastExitRelease = Time.time;
+			lastExitRelease = Time.unscaledTime;
 		}
 
-		if (Time.time - lastExitRelease > exitHoldTime) {
+		if ((shouldExit && exitHoldTime < 0.1) || Time.unscaledDeltaTime - lastExitRelease > exitHoldTime) {
 			Debug.Log("Application Quitting");
 			Application.Quit();
 		}
